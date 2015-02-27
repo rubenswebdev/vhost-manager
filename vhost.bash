@@ -144,9 +144,6 @@ done
 
 if [ "$URL" == "" ] ;then
     echo -e "${RED} Parametros incorretos ${NC}"
-    echo -e "${RED} URL : $URL ${NC}"
-    echo -e "${RED} WEBROOT : $WEBROOT ${NC}"
-    echo -e "${RED} 1 : $1 ${NC}"
     vhost-usage;
     exit 0;
 fi 
