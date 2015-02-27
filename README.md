@@ -13,13 +13,13 @@ $ ./vhost.bash install
 To add a virtual host call 'mysite.dev' with webroot '~/projects/mysite/web'
 
 ```sh
-$ vhost -d '~/projects/mysite/web' -url 'mysite.dev' 'mysite'
+$ vhost -d ~/projects/mysite/web -url 'mysite.dev' 'mysite'
 ```
 >'mysite' is a name of config ex: /etc/apache2/sites-available/mysite.conf
 
 To use a specific template
 ```sh
-$ vhost -d ~/projects/mysite/web -url mysite.dev -t ~/template.conf mysite
+$ vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysite'
 ```
 - **-d** is a directory
 - **-url** is the url to set in /etc/hosts
