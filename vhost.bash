@@ -57,6 +57,8 @@ vhost-install() {
 
 # delete
 vhost-remove() {
+    FPM_POOL_CONF=/etc/php5/fpm/pool.d/$CONFNAME
+
     sudo -v
     echo -e "${YELLOW}Removendo $URL de /etc/hosts.${NC}"
     sudo sed -i '/'$URL'/d' /etc/hosts
@@ -65,6 +67,13 @@ vhost-remove() {
     sudo a2dissite $CONFNAME
     sudo rm /etc/apache2/sites-available/$CONFNAME
     sudo service apache2 reload
+
+    if [ -f $FPM_POOL_CONF ]; then
+        echo -e "${YELLOW}Desativando pool do php5-fpm${NC}"
+        sudo rm "$FPM_POOL_CONF"
+        sudo service php5-fpm reload
+    fi
+
     exit 0
 }
 
