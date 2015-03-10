@@ -1,38 +1,72 @@
 #!/bin/bash
 
-## variaveis
+# ---------------------------------------------------------------------------- #
+# GLOBAL VARIABLES (in script)                                                 #
+# ---------------------------------------------------------------------------- #
+
+# Nome do vhost que sera criado
 NAME="${!#}"
+
+# nome padrao para os arquivos de configuraçao
 CONFNAME="$NAME.conf"
+
+# Email do webmaster do virtualhost
 EMAIL="webmaster@localhost"
+
+# URL do virtual host
 URL=""
+
+# pasta dos arquivos
 WEBROOT=""
+
+# Template padrao para o vhost apache
 TEMPLATE="$HOME/.vhost/template.conf"
+
+# Template padrao para a pool do php5-fpm
 POOL_TEMPLATE="$HOME/.vhost/pool-template.conf"
+
+# Se sera gerado um vhost com php5-fpm
 HAS_POOL_TEMPLATE="0"
 
-#colors output
+# red output
 RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
 
-echo -e "${GREEN}"
-cat <<splash
+# green output
+GREEN='\033[0;32m'
+
+# Yellow outpu
+YELLOW='\033[0;33m'
+
+# No Color
+NC='\033[0m'
+
+# ---------------------------------------------------------------------------- #
+# FUNCTIONS                                                                    #
+# ---------------------------------------------------------------------------  #
+
+vhost-credits() {
+    echo -e "${GREEN}"
+    cat <<splash
 Vhost Manager v0.2.0 By
     - Rubens Fernandes <rubensdrk@gmail.com>
     - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
-echo -e "${NC}"
+    echo -e "${NC}"
 
-if [ "$EUID" -ne 0 ]
-  then echo -e "${RED}Execute com sudo, ou como root${NC}"
-  exit
-fi
+}
+
+vhost-verify-sudo() {
+    if [ "$EUID" -ne 0 ]
+      then echo -e "${RED}Execute com sudo, ou como root${NC}"
+      exit
+    fi
+}
+
 
 # Help
 vhost-usage() {
-echo -e "${YELLOW}"
-cat <<"USAGE"
+    echo -e "${YELLOW}"
+    cat <<"USAGE"
 
 Uso: vhost [OPÇÕES] <nome da config>
     -h|--help   comandos
@@ -50,8 +84,8 @@ vhost -d ~/projetos/silex/web -url silex.dev -t template.conf silex - cria um vh
 vhost -rm silex.dev silex - remove o vhost "silex.conf" e remove a url do arquivo "/etc/hosts"
 
 USAGE
-echo -e "${NC}"
-exit 0
+    echo -e "${NC}"
+    exit 0
 }
 
 # install script
@@ -214,6 +248,8 @@ if [ "$URL" == "" ] ;then
     exit 0;
 fi
 
+vhost-credits;
+vhost-verify-sudo;
 vhost-createFolder;
 vhost-template;
 vhost-generate-vhost;
