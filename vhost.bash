@@ -101,8 +101,8 @@ vhost-generate-vhost() {
     echo -e "${GREEN}Criando $NAME virtual host com index: $WEBROOT${NC}"
 
     sudo cp $TEMPLATE /etc/apache2/sites-available/$NAME
-    sudo sed -i 's/template.email/'$EMAIL'/g' /etc/apache2/sites-available/$NAME
-    sudo sed -i 's/template.url/'$URL'/g' /etc/apache2/sites-available/$NAME
+    sudo sed -i 's#template.email#'$EMAIL'#g' /etc/apache2/sites-available/$NAME
+    sudo sed -i 's#template.url#'$URL'#g' /etc/apache2/sites-available/$NAME
     sudo sed -i 's#template.webroot#'$WEBROOT'#g' /etc/apache2/sites-available/$NAME
     sudo sed -i 's#template.name#'$NAME'#g' /etc/apache2/sites-available/$NAME
 }
