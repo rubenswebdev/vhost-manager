@@ -1,11 +1,14 @@
 #!/bin/bash
 
 ## variaveis
-NAME="${!#}.conf"
+NAME="${!#}"
+CONFNAME="$NAME.conf"
 EMAIL="webmaster@localhost"
 URL=""
 WEBROOT=""
 TEMPLATE="$HOME/.vhost/template.conf"
+POOL_TEMPLATE="$HOME/.vhost/pool-template.conf"
+HAS_POOL_TEMPLATE="0"
 
 #colors output
 RED='\033[0;31m'
@@ -57,9 +60,9 @@ vhost-remove() {
     echo -e "${YELLOW}Removendo $URL de /etc/hosts.${NC}"
     sudo sed -i '/'$URL'/d' /etc/hosts
 
-    echo -e "${YELLOW}Desativando e deletando $NAME virtual host.${NC}"
-    sudo a2dissite $NAME
-    sudo rm /etc/apache2/sites-available/$NAME
+    echo -e "${YELLOW}Desativando e deletando $CONFNAME virtual host.${NC}"
+    sudo a2dissite $CONFNAME
+    sudo rm /etc/apache2/sites-available/$CONFNAME
     sudo service apache2 reload
     exit 0
 }
@@ -88,23 +91,51 @@ vhost-template() {
     echo -e "${GREEN}Verificando template...${NC}"
 
     if [ ! -f "$TEMPLATE" ]; then
-         echo -e "${RED}template não encontrado verificando template global...${NC}"
+        echo -e "${RED}template não encontrado verificando template global...${NC}"
+
         if [ ! -f "$HOME/.vhost/template.conf" ]; then
             echo -e "${RED}$TEMPLATE não encontrado!${NC}"
             exit 0
         fi
     fi
+
+    if [ HAS_POOL_TEMPLATE = "1" ]; then
+        echo -e "${GREEN}Verificando pool template...${NC}"
+
+        if [ ! -f "$POOL_TEMPLATE" ]; then
+            echo -e "${RED}Template nao encontrado, verificando template global... ${NC}"
+
+            if [ ! -f "$HOME/.vhost/template-pool.conf" ]; then
+                echo -e "${RED}$POOL_TEMPLATE não encontrado!${NC}"
+                exit 0
+            fi
+        fi
+    fi
+}
+
+vhost-generate-pool() {
+    echo -e "${GREEN}Generating pool config for php-fpm"
+
+    FPM_POOL_CONF=/etc/php5/fpm/pool.d/$CONFNAME
+
+    sudo cp $POOL_TEMPLATE $FPM_POOL_CONF
+    sudo sed -i 's#template.webroot#'$WEBROOT'#g' $FPM_POOL_CONF
+    sudo sed -i 's#template.name#'$NAME'#g' $FPM_POOL_CONF
 }
 
 # cria vhost na pasta /etc/apache2/sites-available
 vhost-generate-vhost() {
     echo -e "${GREEN}Criando $NAME virtual host com index: $WEBROOT${NC}"
 
-    sudo cp $TEMPLATE /etc/apache2/sites-available/$NAME
-    sudo sed -i 's#template.email#'$EMAIL'#g' /etc/apache2/sites-available/$NAME
-    sudo sed -i 's#template.url#'$URL'#g' /etc/apache2/sites-available/$NAME
-    sudo sed -i 's#template.webroot#'$WEBROOT'#g' /etc/apache2/sites-available/$NAME
-    sudo sed -i 's#template.name#'$NAME'#g' /etc/apache2/sites-available/$NAME
+    APACHE_CONF=/etc/apache2/sites-available/$CONFNAME
+
+    sudo cp $TEMPLATE $APACHE_CONF
+    sudo sed -i 's#template.email#'$EMAIL'#g' $APACHE_CONF
+    sudo sed -i 's#template.url#'$URL'#g' $APACHE_CONF
+
+    if [ HAS_POOL_TEMPLATE = "1" ]; then
+        vhost-generate-pool;
+    fi
 }
 
 # add url ao hosts
@@ -120,11 +151,17 @@ vhost-add-url() {
 }
 
 vhost-enable-reload() {
-    sudo a2ensite $NAME
+    sudo a2ensite $CONFNAME
 
     sudo service apache2 reload
 
-    echo -e "${GREEN}Virtual host $NAME criado com a index $WEBROOT para url http://$URL${NC}"
+    echo -e "${GREEN}Virtual host $CONFNAME criado com a index $WEBROOT para url http://$URL${NC}"
+
+    if [ HAS_POOL_TEMPLATE="1" ]; then
+        sudo service php5-fpm reload
+    fi
+
+    echo -e "${GREEN}Pool for site with host $CONFNAME and pool $POOL_TEMPLATE enabled"
 }
 
 
@@ -137,6 +174,10 @@ while [ $1 ]; do
                vhost-remove;;
         '-d') WEBROOT="$2";;
         '-t') TEMPLATE="$2";;
+        '-pt')
+            POOL_TEMPLATE="$2"
+            HAS_POOL_TEMPLATE="1"
+            ;;
         '-url') URL="$2";;
         '-email') EMAIL="$2";;
         '-install') vhost-install;;
