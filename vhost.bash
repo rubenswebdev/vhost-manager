@@ -104,6 +104,7 @@ vhost-generate-vhost() {
     sudo sed -i 's/template.email/'$EMAIL'/g' /etc/apache2/sites-available/$NAME
     sudo sed -i 's/template.url/'$URL'/g' /etc/apache2/sites-available/$NAME
     sudo sed -i 's#template.webroot#'$WEBROOT'#g' /etc/apache2/sites-available/$NAME
+    sudo sed -i 's#template.name#'$NAME'#g' /etc/apache2/sites-available/$NAME
 }
 
 # add url ao hosts
