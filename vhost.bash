@@ -51,7 +51,7 @@ vhost-install() {
     exit 0;
 }
 
-# delete    
+# delete
 vhost-remove() {
     sudo -v
     echo -e "${YELLOW}Removendo $URL de /etc/hosts.${NC}"
@@ -75,6 +75,7 @@ vhost-list() {
 
 # verificar se a pasta existe
 vhost-createFolder() {
+    sudo -v
     # verificar se a pasta existe
     if [ ! -d "$WEBROOT" ]; then
         echo -e "${GREEN}Creating $WEBROOT directory${NC}"
@@ -146,7 +147,7 @@ if [ "$URL" == "" ] ;then
     echo -e "${RED} Parametros incorretos ${NC}"
     vhost-usage;
     exit 0;
-fi 
+fi
 
 sudo -v
 
