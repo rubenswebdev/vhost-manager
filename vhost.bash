@@ -68,7 +68,7 @@ vhost-remove() {
     sudo rm /etc/apache2/sites-available/$CONFNAME
     sudo service apache2 reload
 
-    if [ -f $FPM_POOL_CONF ]; then
+    if [ -f "$FPM_POOL_CONF" ]; then
         echo -e "${YELLOW}Desativando pool do php5-fpm${NC}"
         sudo rm "$FPM_POOL_CONF"
         sudo service php5-fpm reload
@@ -173,7 +173,7 @@ vhost-enable-reload() {
         sudo service php5-fpm reload
     fi
 
-    echo -e "${GREEN}Pool for site with host $CONFNAME and pool $POOL_TEMPLATE enabled${NC}"
+    echo -e "${GREEN}Pool for site with host and pool $CONFNAME enabled${NC}"
 }
 
 
