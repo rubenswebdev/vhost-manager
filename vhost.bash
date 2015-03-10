@@ -31,6 +31,7 @@ Uso: vhost [OPÇÕES] <nome da config>
     -email      email administrador do vhost (default "webmaster@localhost")
     -l          listas os vhost existentes
     -t          define um template para o vhost
+    -pt         define um template para o pool do php5-fpm
     -install    instala o script globalmente
 
 Exemplos:
@@ -95,7 +96,7 @@ vhost-template() {
 
         if [ ! -f "$HOME/.vhost/template.conf" ]; then
             echo -e "${RED}$TEMPLATE não encontrado!${NC}"
-            exit 0
+            exit 1
         fi
     fi
 
@@ -107,7 +108,7 @@ vhost-template() {
 
             if [ ! -f "$HOME/.vhost/template-pool.conf" ]; then
                 echo -e "${RED}$POOL_TEMPLATE não encontrado!${NC}"
-                exit 0
+                exit 1
             fi
         fi
     fi
