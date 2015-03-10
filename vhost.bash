@@ -115,7 +115,7 @@ vhost-template() {
 }
 
 vhost-generate-pool() {
-    echo -e "${GREEN}Generating pool config for php-fpm"
+    echo -e "${GREEN}Generating pool config for php-fpm${NC}"
 
     FPM_POOL_CONF=/etc/php5/fpm/pool.d/$CONFNAME
 
@@ -133,6 +133,8 @@ vhost-generate-vhost() {
     sudo cp $TEMPLATE $APACHE_CONF
     sudo sed -i 's#template.email#'$EMAIL'#g' $APACHE_CONF
     sudo sed -i 's#template.url#'$URL'#g' $APACHE_CONF
+    sudo sed -i 's#template.webroot#'$WEBROOT'#g' $APACHE_CONF
+    sudo sed -i 's#template.name#'$NAME'#g' $APACHE_CONF
 
     if [ HAS_POOL_TEMPLATE = "1" ]; then
         vhost-generate-pool;
@@ -162,7 +164,7 @@ vhost-enable-reload() {
         sudo service php5-fpm reload
     fi
 
-    echo -e "${GREEN}Pool for site with host $CONFNAME and pool $POOL_TEMPLATE enabled"
+    echo -e "${GREEN}Pool for site with host $CONFNAME and pool $POOL_TEMPLATE enabled${NC}"
 }
 
 
