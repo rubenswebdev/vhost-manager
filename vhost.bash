@@ -58,7 +58,7 @@ exit 0
 vhost-install() {
     cp vhost.bash /usr/bin/vhost
 
-    $CONFDIR=/etc/vhost
+    CONFDIR="/etc/vhost"
 
     if [ ! -e  "$CONFDIR" ]; then
         mkdir "$CONFDIR"
@@ -70,7 +70,7 @@ vhost-install() {
 
 # delete
 vhost-remove() {
-    FPM_POOL_CONF=/etc/php5/fpm/pool.d/$CONFNAME
+    FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
     echo -e "${YELLOW}Removendo $URL de /etc/hosts.${NC}"
     sed -i '/'$URL'/d' /etc/hosts
@@ -137,7 +137,7 @@ vhost-template() {
 vhost-generate-pool() {
     echo -e "${GREEN}Generating pool config for php-fpm${NC}"
 
-    FPM_POOL_CONF=/etc/php5/fpm/pool.d/$CONFNAME
+    FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
     cp $POOL_TEMPLATE $FPM_POOL_CONF
     sed -i 's#template.webroot#'$WEBROOT'#g' $FPM_POOL_CONF
@@ -148,7 +148,7 @@ vhost-generate-pool() {
 vhost-generate-vhost() {
     echo -e "${GREEN}Criando $NAME virtual host com index: $WEBROOT${NC}"
 
-    APACHE_CONF=/etc/apache2/sites-available/$CONFNAME
+    APACHE_CONF="/etc/apache2/sites-available/$CONFNAME"
 
     cp $TEMPLATE $APACHE_CONF
     sed -i 's#template.email#'$EMAIL'#g' $APACHE_CONF
