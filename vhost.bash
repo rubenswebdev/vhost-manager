@@ -44,7 +44,11 @@ NC='\033[0m'
 # FUNCTIONS                                                                    #
 # ---------------------------------------------------------------------------  #
 
+#
+# Shows info on the authors and the program
+#
 vhost-credits() {
+
     echo -e "${GREEN}"
     cat <<splash
 Vhost Manager v0.2.0 By
@@ -55,16 +59,23 @@ splash
 
 }
 
+#
+# Verifies sudo for comments after
+#
 vhost-verify-sudo() {
+
     if [ "$EUID" -ne 0 ]
       then echo -e "${RED}Execute com sudo, ou como root${NC}"
       exit
     fi
+
 }
 
-
-# Help
+#
+# Shows usage information to user
+#
 vhost-usage() {
+
     echo -e "${YELLOW}"
     cat <<"USAGE"
 
@@ -86,9 +97,12 @@ vhost -rm silex.dev silex - remove o vhost "silex.conf" e remove a url do arquiv
 USAGE
     echo -e "${NC}"
     exit 0
+
 }
 
-# install script
+#
+# install script, instal option to add the script in bin directory
+#
 vhost-install() {
     cp vhost.bash /usr/bin/vhost
 
@@ -102,7 +116,9 @@ vhost-install() {
     exit 0;
 }
 
-# delete
+#
+# Removes the added files by the script
+#
 vhost-remove() {
     FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
@@ -123,7 +139,9 @@ vhost-remove() {
     exit 0
 }
 
-# list
+#
+# List avaliable and enabled vhosts
+#
 vhost-list() {
     echo -e "${YELLOW}Virtual hosts disponiveis:${NC}"
     ls -l /etc/apache2/sites-available/
@@ -132,7 +150,9 @@ vhost-list() {
     exit 0
 }
 
+#
 # verificar se a pasta existe
+#
 vhost-createFolder() {
     # verificar se a pasta existe
     if [ ! -d "$WEBROOT" ]; then
@@ -141,7 +161,9 @@ vhost-createFolder() {
     fi
 }
 
-# verificar template
+#
+# Validate template's existance
+#
 vhost-template() {
     echo -e "${GREEN}Verificando template...${NC}"
 
@@ -168,6 +190,9 @@ vhost-template() {
     fi
 }
 
+#
+# Generate pool config file for vhost
+#
 vhost-generate-pool() {
     echo -e "${GREEN}Generating pool config for php-fpm${NC}"
 
@@ -178,7 +203,9 @@ vhost-generate-pool() {
     sed -i 's#template.name#'$NAME'#g' $FPM_POOL_CONF
 }
 
-# cria vhost na pasta /etc/apache2/sites-available
+#
+# Creates a new vhost in sites available of apache
+#
 vhost-generate-vhost() {
     echo -e "${GREEN}Criando $NAME virtual host com index: $WEBROOT${NC}"
 
@@ -195,7 +222,9 @@ vhost-generate-vhost() {
     fi
 }
 
-# add url ao hosts
+#
+#  Adds the new vhost domain in hosts file
+#
 vhost-add-url() {
     echo -e "${GREEN}Adicionando Url Local $URL /etc/hosts ...${NC}"
 
@@ -207,6 +236,9 @@ vhost-add-url() {
     fi
 }
 
+#
+# Reloads apache server andm php5-fpm, if required
+#
 vhost-enable-reload() {
     a2ensite $CONFNAME
 
@@ -222,7 +254,9 @@ vhost-enable-reload() {
 }
 
 
+#
 # Loop to read options and arguments
+#
 while [ $1 ]; do
     case "$1" in
         '-l') vhost-list;;
@@ -242,12 +276,18 @@ while [ $1 ]; do
     shift
 done
 
+#
+# Verify the parameters usage
+#
 if [ "$URL" == "" ] ;then
     echo -e "${RED} Parametros incorretos ${NC}"
     vhost-usage;
     exit 0;
 fi
 
+#
+# Do vhost creation process
+#
 vhost-credits;
 vhost-verify-sudo;
 vhost-createFolder;
