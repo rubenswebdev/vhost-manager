@@ -42,7 +42,29 @@ NC='\033[0m'
 
 # ---------------------------------------------------------------------------- #
 # FUNCTIONS                                                                    #
-# ---------------------------------------------------------------------------  #
+# ---------------------------------------------------------------------------- #
+
+#
+# Echoes a red message
+#
+echo-red() {
+    echo -e "${RED}$1${NC}"
+}
+
+#
+# Echoes a green message
+#
+echo-green() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+#
+# Echoes a yellow message
+#
+echo-yellow() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
 
 #
 # Shows info on the authors and the program
@@ -65,8 +87,8 @@ splash
 vhost-verify-sudo() {
 
     if [ "$EUID" -ne 0 ]
-      then echo -e "${RED}Execute com sudo, ou como root${NC}"
-      exit
+      then echo-red "Execute com sudo, ou como root"
+      exit 1
     fi
 
 }
@@ -104,6 +126,7 @@ USAGE
 # install script, instal option to add the script in bin directory
 #
 vhost-install() {
+
     cp vhost.bash /usr/bin/vhost
 
     CONFDIR="/etc/vhost"
@@ -111,107 +134,125 @@ vhost-install() {
     if [ ! -e  "$CONFDIR" ]; then
         mkdir "$CONFDIR"
     fi
+
     cp template.conf template-phpfpm.conf template-pool.conf $CONFDIR
-    echo -e "${GREEN}Script instalado! use: vhost ${NC}"
+
+    echo-green "Script instalado! use: vhost"
+
     exit 0;
+
 }
 
 #
 # Removes the added files by the script
 #
 vhost-remove() {
+
     FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
-    echo -e "${YELLOW}Removendo $URL de /etc/hosts.${NC}"
+    echo-yellow "Removendo $URL de /etc/hosts."
     sed -i '/'$URL'/d' /etc/hosts
 
-    echo -e "${YELLOW}Desativando e deletando $CONFNAME virtual host.${NC}"
+    echo-yellow "Desativando e deletando $CONFNAME virtual host."
     a2dissite $CONFNAME
-    rm /etc/apache2/sites-available/$CONFNAME
+
+    rm "/etc/apache2/sites-available/$CONFNAME"
     service apache2 reload
 
     if [ -f "$FPM_POOL_CONF" ]; then
-        echo -e "${YELLOW}Desativando pool do php5-fpm${NC}"
+        echo-yellow "Desativando pool do php5-fpm"
         rm "$FPM_POOL_CONF"
         service php5-fpm reload
     fi
 
     exit 0
+
 }
 
 #
 # List avaliable and enabled vhosts
 #
 vhost-list() {
-    echo -e "${YELLOW}Virtual hosts disponiveis:${NC}"
-    ls -l /etc/apache2/sites-available/
-    echo -e "${GREEN}Virtual hosts ativados:${NC}"
-    ls -l /etc/apache2/sites-enabled/
+
+    echo-yellow "Virtual hosts disponiveis:"
+    ls -l "/etc/apache2/sites-available/"
+
+    echo-green "Virtual hosts ativados:"
+    ls -l "/etc/apache2/sites-enabled/"
+
     exit 0
+
 }
 
 #
 # verificar se a pasta existe
 #
 vhost-createFolder() {
-    # verificar se a pasta existe
+
     if [ ! -d "$WEBROOT" ]; then
-        echo -e "${GREEN}Creating $WEBROOT directory${NC}"
+        echo-green "Creating $WEBROOT directory"
         mkdir -p $WEBROOT
     fi
+
 }
 
 #
 # Validate template's existance
 #
 vhost-template() {
-    echo -e "${GREEN}Verificando template...${NC}"
+
+    echo-green "Verificando template..."
 
     if [ ! -f "$TEMPLATE" ]; then
-        echo -e "${RED}template não encontrado verificando template global...${NC}"
+        echo-red "template não encontrado verificando template global..."
 
         if [ ! -f "$HOME/.vhost/template.conf" ]; then
-            echo -e "${RED}$TEMPLATE não encontrado!${NC}"
+            echo-red "$TEMPLATE não encontrado!"
             exit 1
         fi
     fi
 
     if [ HAS_POOL_TEMPLATE = "1" ]; then
-        echo -e "${GREEN}Verificando pool template...${NC}"
+        echo-green "Verificando pool template..."
 
         if [ ! -f "$POOL_TEMPLATE" ]; then
-            echo -e "${RED}Template nao encontrado, verificando template global... ${NC}"
+            echo-red "Template nao encontrado, verificando template global... "
 
             if [ ! -f "$HOME/.vhost/template-pool.conf" ]; then
-                echo -e "${RED}$POOL_TEMPLATE não encontrado!${NC}"
+                echo-red "$POOL_TEMPLATE não encontrado!"
                 exit 1
             fi
         fi
     fi
+
 }
 
 #
 # Generate pool config file for vhost
 #
 vhost-generate-pool() {
-    echo -e "${GREEN}Generating pool config for php-fpm${NC}"
+
+    echo-green "Generating pool config for php-fpm"
 
     FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
     cp $POOL_TEMPLATE $FPM_POOL_CONF
     sed -i 's#template.webroot#'$WEBROOT'#g' $FPM_POOL_CONF
     sed -i 's#template.name#'$NAME'#g' $FPM_POOL_CONF
+
 }
 
 #
 # Creates a new vhost in sites available of apache
 #
 vhost-generate-vhost() {
-    echo -e "${GREEN}Criando $NAME virtual host com index: $WEBROOT${NC}"
+
+    echo-green "Criando $NAME virtual host com index: $WEBROOT"
 
     APACHE_CONF="/etc/apache2/sites-available/$CONFNAME"
 
     cp $TEMPLATE $APACHE_CONF
+
     sed -i 's#template.email#'$EMAIL'#g' $APACHE_CONF
     sed -i 's#template.url#'$URL'#g' $APACHE_CONF
     sed -i 's#template.webroot#'$WEBROOT'#g' $APACHE_CONF
@@ -220,39 +261,51 @@ vhost-generate-vhost() {
     if [ HAS_POOL_TEMPLATE = "1" ]; then
         vhost-generate-pool;
     fi
+
 }
 
 #
 #  Adds the new vhost domain in hosts file
 #
 vhost-add-url() {
-    echo -e "${GREEN}Adicionando Url Local $URL /etc/hosts ...${NC}"
 
-    if grep -F "$URL" /etc/hosts
+    HOSTS_PATH="/etc/hosts"
+
+    echo-green "Adicionando Url Local $URL /etc/hosts ..."
+
+    if grep -F "$URL" $HOSTS_PATH
     then
-        echo -e "${YELLOW}Url já existe em Hosts${NC}"
+        echo-yellow "Url já existe em Hosts"
     else
-        sed -i '1s/^/127.0.0.1       '$URL'\n/' /etc/hosts
+        sed -i '1s/^/127.0.0.1       '$URL'\n/' $HOSTS_PATH
     fi
+
 }
 
 #
 # Reloads apache server andm php5-fpm, if required
 #
 vhost-enable-reload() {
+
     a2ensite $CONFNAME
 
     service apache2 reload
 
-    echo -e "${GREEN}Virtual host $CONFNAME criado com a index $WEBROOT para url http://$URL${NC}"
+    echo-green "Virtual host $CONFNAME criado com a index $WEBROOT para url http://$URL"
 
     if [ HAS_POOL_TEMPLATE="1" ]; then
         service php5-fpm reload
     fi
 
-    echo -e "${GREEN}Pool for site with host and pool $CONFNAME enabled${NC}"
+    echo-green "Pool for site with host and pool $CONFNAME enabled"
+
 }
 
+#
+# Initial script
+#
+vhost-credits;
+vhost-verify-sudo;
 
 #
 # Loop to read options and arguments
@@ -261,8 +314,10 @@ while [ $1 ]; do
     case "$1" in
         '-l') vhost-list;;
         '-h'|'--help') vhost-usage;;
-        '-rm') URL="$2"
-               vhost-remove;;
+        '-rm')
+            URL="$2"
+            vhost-remove
+            ;;
         '-d') WEBROOT="$2";;
         '-t') TEMPLATE="$2";;
         '-pt')
@@ -279,8 +334,8 @@ done
 #
 # Verify the parameters usage
 #
-if [ "$URL" == "" ] ;then
-    echo -e "${RED} Parametros incorretos ${NC}"
+if [ "$URL" == "" ]; then
+    echo-red "Parametros incorretos"
     vhost-usage;
     exit 0;
 fi
@@ -288,8 +343,6 @@ fi
 #
 # Do vhost creation process
 #
-vhost-credits;
-vhost-verify-sudo;
 vhost-createFolder;
 vhost-template;
 vhost-generate-vhost;
