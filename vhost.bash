@@ -262,6 +262,11 @@ vhost-generate-vhost() {
         vhost-generate-pool;
     fi
 
+    if [ ! -f $APACHE_CONF  ]; then
+        echo-red "O arquivo de vhost nao foi criado, abortando..."
+        exit 1
+    fi
+
 }
 
 #
