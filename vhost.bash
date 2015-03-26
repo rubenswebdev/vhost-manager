@@ -73,7 +73,7 @@ vhost-credits() {
 
     echo -e "${GREEN}"
     cat <<splash
-Vhost Manager v0.2.0 By
+Vhost Manager v0.2.2 By
     - Rubens Fernandes <rubensdrk@gmail.com>
     - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
