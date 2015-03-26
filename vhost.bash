@@ -73,7 +73,7 @@ vhost-credits() {
 
     echo -e "${GREEN}"
     cat <<splash
-Vhost Manager v0.2.0 By
+Vhost Manager v0.2.2 By
     - Rubens Fernandes <rubensdrk@gmail.com>
     - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
@@ -212,7 +212,7 @@ vhost-template() {
         fi
     fi
 
-    if [ HAS_POOL_TEMPLATE = "1" ]; then
+    if [ $HAS_POOL_TEMPLATE = "1" ]; then
         echo-green "Verificando pool template..."
 
         if [ ! -f "$POOL_TEMPLATE" ]; then
@@ -258,7 +258,7 @@ vhost-generate-vhost() {
     sed -i 's#template.webroot#'$WEBROOT'#g' $APACHE_CONF
     sed -i 's#template.name#'$NAME'#g' $APACHE_CONF
 
-    if [ HAS_POOL_TEMPLATE = "1" ]; then
+    if [ $HAS_POOL_TEMPLATE = "1" ]; then
         vhost-generate-pool;
     fi
 
@@ -298,7 +298,7 @@ vhost-enable-reload() {
 
     echo-green "Virtual host $CONFNAME criado com a index $WEBROOT para url http://$URL"
 
-    if [ HAS_POOL_TEMPLATE="1" ]; then
+    if [ $HAS_POOL_TEMPLATE = "1" ]; then
         service php5-fpm reload
     fi
 
