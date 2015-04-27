@@ -300,9 +300,9 @@ vhost-enable-reload() {
 
     if [ $HAS_POOL_TEMPLATE = "1" ]; then
         service php5-fpm reload
+        echo-green "Pool for site with host and pool $CONFNAME enabled"
     fi
 
-    echo-green "Pool for site with host and pool $CONFNAME enabled"
 
 }
 
