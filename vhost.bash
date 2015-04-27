@@ -20,10 +20,10 @@ URL=""
 WEBROOT=""
 
 # Template padrao para o vhost apache
-TEMPLATE="$HOME/.vhost/template.conf"
+TEMPLATE="/etc/vhost/template.conf"
 
 # Template padrao para a pool do php5-fpm
-POOL_TEMPLATE="$HOME/.vhost/pool-template.conf"
+POOL_TEMPLATE="/etc/vhost/pool-template.conf"
 
 # Se sera gerado um vhost com php5-fpm
 HAS_POOL_TEMPLATE="0"
@@ -73,7 +73,7 @@ vhost-credits() {
 
     echo -e "${GREEN}"
     cat <<splash
-Vhost Manager v0.2.2 By
+Vhost Manager v0.2.3 By
     - Rubens Fernandes <rubensdrk@gmail.com>
     - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
@@ -113,8 +113,8 @@ Uso: vhost [OPÇÕES] <nome da config>
     -install    instala o script globalmente
 
 Exemplos:
-vhost -d ~/projetos/silex/web -url silex.dev -t template.conf silex - cria um vhost chamado "silex.conf" para url "silex.dev" na pasta ~/projetos/silex/web com o template "template.conf"
-vhost -rm silex.dev silex - remove o vhost "silex.conf" e remove a url do arquivo "/etc/hosts"
+sudo vhost -d ~/projetos/silex/web -url silex.dev -t template.conf silex - cria um vhost chamado "silex.conf" para url "silex.dev" na pasta ~/projetos/silex/web com o template "template.conf"
+sudo vhost -rm silex.dev silex - remove o vhost "silex.conf" e remove a url do arquivo "/etc/hosts"
 
 USAGE
     echo -e "${NC}"
@@ -126,7 +126,7 @@ USAGE
 # install script, instal option to add the script in bin directory
 #
 vhost-install() {
-
+    vhost-verify-sudo;
     cp vhost.bash /usr/bin/vhost
 
     CONFDIR="/etc/vhost"
@@ -147,7 +147,7 @@ vhost-install() {
 # Removes the added files by the script
 #
 vhost-remove() {
-
+    vhost-verify-sudo;
     FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
 
     echo-yellow "Removendo $URL de /etc/hosts."
@@ -188,7 +188,7 @@ vhost-list() {
 # verificar se a pasta existe
 #
 vhost-createFolder() {
-
+    vhost-verify-sudo;
     if [ ! -d "$WEBROOT" ]; then
         echo-green "Creating $WEBROOT directory"
         mkdir -p $WEBROOT
@@ -200,13 +200,13 @@ vhost-createFolder() {
 # Validate template's existance
 #
 vhost-template() {
-
+    vhost-verify-sudo;
     echo-green "Verificando template..."
 
     if [ ! -f "$TEMPLATE" ]; then
         echo-red "template não encontrado verificando template global..."
 
-        if [ ! -f "$HOME/.vhost/template.conf" ]; then
+        if [ ! -f "/etc/vhost/template.conf" ]; then
             echo-red "$TEMPLATE não encontrado!"
             exit 1
         fi
@@ -218,7 +218,7 @@ vhost-template() {
         if [ ! -f "$POOL_TEMPLATE" ]; then
             echo-red "Template nao encontrado, verificando template global... "
 
-            if [ ! -f "$HOME/.vhost/template-pool.conf" ]; then
+            if [ ! -f "/etc/vhost/template-pool.conf" ]; then
                 echo-red "$POOL_TEMPLATE não encontrado!"
                 exit 1
             fi
@@ -231,7 +231,7 @@ vhost-template() {
 # Generate pool config file for vhost
 #
 vhost-generate-pool() {
-
+    vhost-verify-sudo;
     echo-green "Generating pool config for php-fpm"
 
     FPM_POOL_CONF="/etc/php5/fpm/pool.d/$CONFNAME"
@@ -246,7 +246,7 @@ vhost-generate-pool() {
 # Creates a new vhost in sites available of apache
 #
 vhost-generate-vhost() {
-
+    vhost-verify-sudo;
     echo-green "Criando $NAME virtual host com index: $WEBROOT"
 
     APACHE_CONF="/etc/apache2/sites-available/$CONFNAME"
@@ -273,7 +273,7 @@ vhost-generate-vhost() {
 #  Adds the new vhost domain in hosts file
 #
 vhost-add-url() {
-
+    vhost-verify-sudo;
     HOSTS_PATH="/etc/hosts"
 
     echo-green "Adicionando Url Local $URL /etc/hosts ..."
@@ -291,7 +291,7 @@ vhost-add-url() {
 # Reloads apache server andm php5-fpm, if required
 #
 vhost-enable-reload() {
-
+    vhost-verify-sudo;
     a2ensite $CONFNAME
 
     service apache2 reload
@@ -310,7 +310,6 @@ vhost-enable-reload() {
 # Initial script
 #
 vhost-credits;
-vhost-verify-sudo;
 
 #
 # Loop to read options and arguments
