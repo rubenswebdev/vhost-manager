@@ -8,7 +8,7 @@ First install script
 ```sh
 $ git clone https://github.com/rubensfernandes/vhost-manager.git
 $ cd vhost-manager
-$ ./vhost.bash install
+$ ./vhost.bash -install
 ```
 
 To add a virtual host call 'mysite.dev' with webroot '~/projects/mysite/web'
@@ -46,7 +46,7 @@ Example:
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-    #REWRITE URL     
+    #REWRITE URL
     <Directory template.webroot >
 
         Options Indexes FollowSymLinks
