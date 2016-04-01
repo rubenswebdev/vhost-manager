@@ -13,6 +13,9 @@ CONFNAME="$NAME.conf"
 # Email do webmaster do virtualhost
 EMAIL="webmaster@localhost"
 
+# Email do webmaster do virtualhost
+LOGPATH="${APACHE_LOG_DIR}"
+
 # URL do virtual host
 URL=""
 
@@ -257,6 +260,7 @@ vhost-generate-vhost() {
     sed -i 's#template.url#'$URL'#g' $APACHE_CONF
     sed -i 's#template.webroot#'$WEBROOT'#g' $APACHE_CONF
     sed -i 's#template.name#'$NAME'#g' $APACHE_CONF
+    sed -i 's#template.logpath#'$LOGPATH'#g' $APACHE_CONF
 
     if [ $HAS_POOL_TEMPLATE = "1" ]; then
         vhost-generate-pool;
@@ -330,6 +334,7 @@ while [ $1 ]; do
             ;;
         '-url') URL="$2";;
         '-email') EMAIL="$2";;
+        '-logpath') LOGPATH="$2";;
         '-install') vhost-install;;
     esac
     shift
