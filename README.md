@@ -70,3 +70,8 @@ To see help
 ```sh
 $ vhost -h
 ```
+
+To autoupdate (alpha)
+```sh
+$ vhost -update
+```
