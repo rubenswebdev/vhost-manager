@@ -158,10 +158,11 @@ vhost-install() {
 # Update Vhost
 #
 vhost-update() {
+    cd /etc/vhost
     git remote update > /dev/null
     needUpdate=$(git status -uno | grep -c "git pull")
 
-    if [ $needUpdate -ne 0 ]; then
+    if [ "$needUpdate" -ne 0 ]; then
         echo-yellow "Need update..."
         git pull origin master > /dev/null
         echo-green "Update complete!"
