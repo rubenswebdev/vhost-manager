@@ -150,7 +150,7 @@ vhost-install() {
 
     echo-green "Script installed! use: vhost"
 
-    exit 0;
+    exit 0
 
 }
 
@@ -158,7 +158,8 @@ vhost-install() {
 # Update Vhost
 #
 vhost-update() {
-    git pull origin master
+    git fetch origin master
+    exit 0
 }
 
 #
