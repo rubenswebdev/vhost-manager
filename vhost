@@ -161,8 +161,10 @@ vhost-update() {
     needUpdate=$(git status -uno | grep -c "git pull")
 
     if [ "$needUpdate" -ne 0 ]; then
-        echo "need update"
+        echo-yellow "Need update!"
         git pull origin master
+    else
+        echo-green "Already updated!"
     fi
 
     exit 0
