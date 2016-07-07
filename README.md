@@ -71,7 +71,7 @@ To see help
 $ vhost -h
 ```
 
-To autoupdate (beta)
+To autoupdate
 ```sh
 $ vhost -update
 ```
