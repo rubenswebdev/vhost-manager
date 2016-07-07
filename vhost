@@ -159,6 +159,7 @@ vhost-install() {
 #
 vhost-update() {
     cd /etc/vhost
+    git checkout .
     git remote update > /dev/null
     needUpdate=$(git status -uno | grep -c "git pull")
 
