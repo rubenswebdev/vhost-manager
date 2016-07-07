@@ -137,7 +137,6 @@ USAGE
 #
 vhost-install() {
     vhost-verify-sudo;
-    cp vhost.bash /usr/bin/vhost
 
     CONFDIR="/etc/vhost"
 
@@ -145,12 +144,21 @@ vhost-install() {
         mkdir "$CONFDIR"
     fi
 
-    cp template.conf template-phpfpm.conf template-pool.conf $CONFDIR
+    #cp template.conf template-phpfpm.conf template-pool.conf $CONFDIR
+    cp -r $(pwd)/. $CONFDIR
+    ln -s -f $CONFDIR/vhost /usr/bin/vhost
 
     echo-green "Script installed! use: vhost"
 
     exit 0;
 
+}
+
+#
+# Update Vhost
+#
+vhost-update() {
+    git pull origin master
 }
 
 #
@@ -343,6 +351,7 @@ while [ $1 ]; do
         '-email') EMAIL="$2";;
         '-logpath') LOGPATH="$2";;
         '-install') vhost-install;;
+        '-update') vhost-update;;
     esac
     shift
 done
