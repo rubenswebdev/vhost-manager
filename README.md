@@ -8,7 +8,7 @@ First install script
 ```sh
 $ git clone https://github.com/rubensfernandes/vhost-manager.git
 $ cd vhost-manager
-$ ./vhost.bash -install
+$ ./vhost -install
 ```
 
 To add a virtual host call 'mysite.dev' with webroot '~/projects/mysite/web'

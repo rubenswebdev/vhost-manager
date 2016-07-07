@@ -76,9 +76,8 @@ vhost-credits() {
 
     echo -e "${GREEN}"
     cat <<splash
-Vhost Manager v1.1.0 By
-    - Rubens Fernandes <rubensdrk@gmail.com>
-    - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
+Vhost Manager v1.2.0 Created by Rubens Fernandes <rubensdrk@gmail.com>
+    php-fm support by Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
     echo -e "${NC}"
 
