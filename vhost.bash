@@ -114,7 +114,7 @@ Uso: vhost [options] <name of vhost>
     -t          set template for vhost
     -pt         set template for pool of php5-fpm
     -install    install the script globally
-    -logpath    set the path default for save the logs eg: error.log; access.log of the apache2
+    -logpath    set the path default for save the logs eg: error.log; access.log of the apache2. dont pass '/' at the end of path
 
 
 USAGE

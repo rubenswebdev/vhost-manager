@@ -25,12 +25,14 @@ $ vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysite'
 - **-d** is a directory
 - **-url** is the url to set in /etc/hosts
 - **-t** is the template
+- **-logpath** path to save log files
 - **mysite** is name of config to set in /etc/apache2/sites-available/mysite.conf
 
 >Templates should be use parameters
 * template.url
 * template.webroot
 * template.email
+* template.logpath
 
 Example:
 ```
@@ -43,8 +45,8 @@ Example:
     DocumentRoot template.webroot
 
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    ErrorLog template.logpath/error.log
+    CustomLog template.logpath/access.log combined
 
     #REWRITE URL
     <Directory template.webroot >
