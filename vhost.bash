@@ -178,10 +178,10 @@ vhost-remove() {
 vhost-list() {
 
     echo-yellow "Virtual hosts disponiveis:"
-    ls -l "/etc/apache2/sites-available/"
+    ls -1 "/etc/apache2/sites-available/"
 
     echo-green "Virtual hosts ativados:"
-    ls -l "/etc/apache2/sites-enabled/"
+    ls -1 "/etc/apache2/sites-enabled/"
 
     exit 0
 
