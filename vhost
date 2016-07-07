@@ -158,7 +158,13 @@ vhost-install() {
 # Update Vhost
 #
 vhost-update() {
-    git fetch origin master
+    needUpdate=$(git status -uno | grep -c "git pull")
+
+    if [ "$needUpdate" -ne 0 ]; then
+        echo "need update"
+        git pull origin master
+    fi
+
     exit 0
 }
 
