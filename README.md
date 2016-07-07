@@ -8,19 +8,19 @@ First install script
 ```sh
 $ git clone https://github.com/rubensfernandes/vhost-manager.git
 $ cd vhost-manager
-$ ./vhost -install
+$ sudo ./vhost -install
 ```
 
 To add a virtual host call 'mysite.dev' with webroot '~/projects/mysite/web'
 
 ```sh
-$ vhost -d ~/projects/mysite/web -url 'mysite.dev' 'mysite'
+$ sudo vhost -d ~/projects/mysite/web -url 'mysite.dev' 'mysite'
 ```
 >'mysite' is a name of config ex: /etc/apache2/sites-available/mysite.conf
 
 To use a specific template
 ```sh
-$ vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysite'
+$ sudo vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysite'
 ```
 - **-d** is a directory
 - **-url** is the url to set in /etc/hosts
@@ -63,15 +63,15 @@ Example:
 
 To remove a virtual host use
 ```sh
-$ vhost -rm mysite
+$ sudo vhost -rm mysite
 ```
 
 To see help
 ```sh
-$ vhost -h
+$ sudo vhost -h
 ```
 
 To autoupdate
 ```sh
-$ vhost -update
+$ sudo vhost -update
 ```
