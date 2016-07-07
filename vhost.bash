@@ -14,7 +14,7 @@ CONFNAME="$NAME.conf"
 EMAIL="webmaster@localhost"
 
 # Email do webmaster do virtualhost
-LOGPATH="${APACHE_LOG_DIR}"
+LOGPATH="\${APACHE_LOG_DIR}"
 
 # URL do virtual host
 URL=""
@@ -76,7 +76,7 @@ vhost-credits() {
 
     echo -e "${GREEN}"
     cat <<splash
-Vhost Manager v0.2.3 By
+Vhost Manager v1.1.0 By
     - Rubens Fernandes <rubensdrk@gmail.com>
     - Reinaldo A. C. Rauch <reinaldorauch@gmail.com>
 splash
@@ -90,7 +90,7 @@ splash
 vhost-verify-sudo() {
 
     if [ "$EUID" -ne 0 ]
-      then echo-red "Execute com sudo, ou como root"
+      then echo-red "Execute as root eg: sudo"
       exit 1
     fi
 
@@ -104,22 +104,29 @@ vhost-usage() {
     echo -e "${YELLOW}"
     cat <<"USAGE"
 
-Uso: vhost [OPÇÕES] <nome da config>
-    -h|--help   comandos
-    -url        url local do site
-    -rm         remove um vhost e exclui da /etc/hosts
-    -d          para especificar a pasta web default do site (index)
-    -email      email administrador do vhost (default "webmaster@localhost")
-    -l          listas os vhost existentes
-    -t          define um template para o vhost
-    -pt         define um template para o pool do php5-fpm
-    -install    instala o script globalmente
+Uso: vhost [options] <name of vhost>
+    -h|--help   help
+    -url        url local of the project eg: site.dev
+    -rm         remove a vhost and delete from /etc/hosts
+    -d          the folder for index
+    -email      email to webmaster (default "webmaster@localhost")
+    -l          list all vhosts
+    -t          set template for vhost
+    -pt         set template for pool of php5-fpm
+    -install    install the script globally
+    -logpath    set the path default for save the logs eg: error.log; access.log of the apache2
 
-Exemplos:
-sudo vhost -d ~/projetos/silex/web -url silex.dev -t template.conf silex - cria um vhost chamado "silex.conf" para url "silex.dev" na pasta ~/projetos/silex/web com o template "template.conf"
-sudo vhost -rm silex.dev silex - remove o vhost "silex.conf" e remove a url do arquivo "/etc/hosts"
 
 USAGE
+
+    echo "Examples:"
+    echo
+    echo-yellow "Create a vhost call \"silex.conf\" for url \"silex.dev\" with webroot ~/projetos/silex/web with the template \"template.conf\""
+    echo-green "sudo vhost -d ~/projetos/silex/web -url silex.dev -t template.conf silex"
+    echo
+    echo-yellow "Remove the vhost \"silex.conf\" and remove the url of \"/etc/hosts\""
+    echo-green "sudo vhost -rm silex.dev silex"
+
     echo -e "${NC}"
     exit 0
 
@@ -140,7 +147,7 @@ vhost-install() {
 
     cp template.conf template-phpfpm.conf template-pool.conf $CONFDIR
 
-    echo-green "Script instalado! use: vhost"
+    echo-green "Script installed! use: vhost"
 
     exit 0;
 
@@ -177,10 +184,10 @@ vhost-remove() {
 #
 vhost-list() {
 
-    echo-yellow "Virtual hosts disponiveis:"
+    echo-yellow "Virtual hosts avaliable:"
     ls -1 "/etc/apache2/sites-available/"
 
-    echo-green "Virtual hosts ativados:"
+    echo-green "Virtual hosts enabled:"
     ls -1 "/etc/apache2/sites-enabled/"
 
     exit 0
@@ -204,25 +211,25 @@ vhost-createFolder() {
 #
 vhost-template() {
     vhost-verify-sudo;
-    echo-green "Verificando template..."
+    echo-green "Verifying template..."
 
     if [ ! -f "$TEMPLATE" ]; then
-        echo-red "template não encontrado verificando template global..."
+        echo-red "template not found, verifying global template..."
 
         if [ ! -f "/etc/vhost/template.conf" ]; then
-            echo-red "$TEMPLATE não encontrado!"
+            echo-red "$TEMPLATE not found!"
             exit 1
         fi
     fi
 
     if [ $HAS_POOL_TEMPLATE = "1" ]; then
-        echo-green "Verificando pool template..."
+        echo-green "Verifying pool template..."
 
         if [ ! -f "$POOL_TEMPLATE" ]; then
-            echo-red "Template nao encontrado, verificando template global... "
+            echo-red "Template not found, verifying global template... "
 
             if [ ! -f "/etc/vhost/template-pool.conf" ]; then
-                echo-red "$POOL_TEMPLATE não encontrado!"
+                echo-red "$POOL_TEMPLATE not found!"
                 exit 1
             fi
         fi
@@ -250,7 +257,7 @@ vhost-generate-pool() {
 #
 vhost-generate-vhost() {
     vhost-verify-sudo;
-    echo-green "Criando $NAME virtual host com index: $WEBROOT"
+    echo-green "Creating $NAME virtual host with webroot: $WEBROOT"
 
     APACHE_CONF="/etc/apache2/sites-available/$CONFNAME"
 
@@ -267,7 +274,7 @@ vhost-generate-vhost() {
     fi
 
     if [ ! -f $APACHE_CONF  ]; then
-        echo-red "O arquivo de vhost nao foi criado, abortando..."
+        echo-red "Fail, aborting..."
         exit 1
     fi
 
@@ -280,11 +287,11 @@ vhost-add-url() {
     vhost-verify-sudo;
     HOSTS_PATH="/etc/hosts"
 
-    echo-green "Adicionando Url Local $URL /etc/hosts ..."
+    echo-green "Set local url in $URL /etc/hosts ..."
 
     if grep -F "$URL" $HOSTS_PATH
     then
-        echo-yellow "Url já existe em Hosts"
+        echo-yellow "Url already exists"
     else
         sed -i '1s/^/127.0.0.1       '$URL'\n/' $HOSTS_PATH
     fi
@@ -300,7 +307,7 @@ vhost-enable-reload() {
 
     service apache2 reload
 
-    echo-green "Virtual host $CONFNAME criado com a index $WEBROOT para url http://$URL"
+    echo-green "Virtual host $CONFNAME created with webroot $WEBROOT for url http://$URL"
 
     if [ $HAS_POOL_TEMPLATE = "1" ]; then
         service php5-fpm reload
@@ -344,7 +351,7 @@ done
 # Verify the parameters usage
 #
 if [ "$URL" == "" ]; then
-    echo-red "Parametros incorretos"
+    echo-red "You need to specify the options"
     vhost-usage;
     exit 0;
 fi
