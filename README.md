@@ -25,6 +25,7 @@ $ sudo vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysi
 - **-d** is a directory
 - **-url** is the url to set in /etc/hosts
 - **-t** is the template
+- **-p** the port which the application will be hosted
 - **-logpath** path to save log files
 - **mysite** is name of config to set in /etc/apache2/sites-available/mysite.conf
 
@@ -33,6 +34,7 @@ $ sudo vhost -d ~/projects/mysite/web -url 'mysite.dev' -t ~/template.conf 'mysi
 * template.webroot
 * template.email
 * template.logpath
+* template.port
 
 Example:
 ```
